@@ -3,7 +3,7 @@
 //@update: 2025-01-17 16:00
 
 indicator("Bitfinex BTC Premium", overlay=false)
-
+// BITFINEX COINBASE
 bitfinex_btc = request.security('BITFINEX:BTCUSD', '60', close) // Retrieve Bitfinex BTC price data
 binance_btc = request.security('BINANCE:BTCUSDT', '60', close) // Retrieve Binance BTC price data
 
