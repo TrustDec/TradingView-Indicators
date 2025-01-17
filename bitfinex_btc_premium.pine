@@ -1,0 +1,14 @@
+//@version=6
+//@author: TrustDec
+//@update: 2025-01-17 16:00
+
+indicator("Bitfinex BTC Premium", overlay=false)
+
+bitfinex_btc = request.security('BITFINEX:BTCUSD', '60', close) // Retrieve Bitfinex BTC price data
+binance_btc = request.security('BINANCE:BTCUSDT', '60', close) // Retrieve Binance BTC price data
+
+premium = (bitfinex_btc - binance_btc) / binance_btc * 100 // Calculate the premium
+
+plot(premium, title="Premium (%)", color = premium >= 0 ? color.green : color.red, linewidth = 2, style = plot.style_histogram) // Plot the premium as a histogram
+
+hline(0, title = 'Zero Line', color = color.gray) // Draw a horizontal line at zero for reference
