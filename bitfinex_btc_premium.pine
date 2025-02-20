@@ -9,6 +9,11 @@ binance_btc = request.security('BINANCE:BTCUSDT', '60', close) // Retrieve Binan
 
 premium = (bitfinex_btc - binance_btc) / binance_btc * 100 // Calculate the premium
 
-plot(premium, title="Premium (%)", color = premium >= 0 ? color.green : color.red, linewidth = 2, style = plot.style_histogram) // Plot the premium as a histogram
+// Set color for histogram bars
+barColor = premium > 0.2 ? color.rgb(253, 215, 2) : premium >= 0 ? color.green : color.red
 
-hline(0, title = 'Zero Line', color = color.gray) // Draw a horizontal line at zero for reference
+plot(premium, title="Premium (%)", color = barColor, linewidth = 2, style = plot.style_histogram) // Plot the premium as a histogram
+
+// Add horizontal lines at specific levels
+hline(0.2, title = '0.2 Line', color = color.blue,linewidth=1)// Draw a horizontal line at 0.2
+hline(-0.15, title = '-0.15 Line', color = color.orange,linewidth=1) // Draw a horizontal line at -0.15
