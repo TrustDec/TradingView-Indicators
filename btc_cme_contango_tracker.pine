@@ -2,9 +2,23 @@
 // © TrustDec
 
 //@version=6
-indicator("CME vs BTCUSDT Spread", overlay = false)
-cme = request.security("CME:BTC1!", timeframe.period, close)
-spot = request.security("BINANCE:BTCUSDT", timeframe.period, close)
-spread = cme - spot
-plot(spread, title = "Spread (CME - BTCUSDT)", style = plot.style_columns, color = spread >= 0 ? color.green : color.red)
-hline(0, "Zero Line", color = color.gray)
+indicator("BTC/ETH CME Basis Spread", overlay = false)
+
+symbol = syminfo.tickerid
+
+btc_cme = request.security("CME:BTC1!", timeframe.period, close)
+btc_spot = request.security("BINANCE:BTCUSDT", timeframe.period, close)
+eth_cme = request.security("CME:ETH1!", timeframe.period, close)
+eth_spot = request.security("BINANCE:ETHUSDT", timeframe.period, close)
+
+is_btc_chart = str.contains(symbol, "BTC")
+is_eth_chart = str.contains(symbol, "ETH")
+
+btc_spread = btc_cme - btc_spot
+eth_spread = eth_cme - eth_spot
+
+spread = is_btc_chart ? btc_spread : (is_eth_chart ? eth_spread : na)
+
+plot(spread, title="CME Basis Spread", style=plot.style_columns, color=spread >= 0 ? color.green : color.red)
+hline(0, "Zero Line", color=color.gray)
+
