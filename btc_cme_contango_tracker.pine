@@ -1,0 +1,10 @@
+// This Pine Script® code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © TrustDec
+
+//@version=6
+indicator("CME vs BTCUSDT Spread", overlay = false)
+cme = request.security("CME:BTC1!", timeframe.period, close)
+spot = request.security("BINANCE:BTCUSDT", timeframe.period, close)
+spread = cme - spot
+plot(spread, title = "Spread (CME - BTCUSDT)", style = plot.style_columns, color = spread >= 0 ? color.green : color.red)
+hline(0, "Zero Line", color = color.gray)
