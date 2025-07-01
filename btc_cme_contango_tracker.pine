@@ -1,14 +1,10 @@
-// This Pine Script® code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
-// © TrustDec
-
 //@version=6
-indicator("BTC/ETH CME Basis Spread", overlay = false)
+indicator("BTC/ETH CME Basis Spread with Weekend & Close Hours Highlight", overlay = false)
 
 symbol = syminfo.tickerid
-
-btc_cme = request.security("CME:BTC1!", timeframe.period, close)
+btc_cme  = request.security("CME:BTC1!", timeframe.period, close)
 btc_spot = request.security("BINANCE:BTCUSDT", timeframe.period, close)
-eth_cme = request.security("CME:ETH1!", timeframe.period, close)
+eth_cme  = request.security("CME:ETH1!", timeframe.period, close)
 eth_spot = request.security("BINANCE:ETHUSDT", timeframe.period, close)
 
 is_btc_chart = str.contains(symbol, "BTC")
@@ -16,9 +12,21 @@ is_eth_chart = str.contains(symbol, "ETH")
 
 btc_spread = btc_cme - btc_spot
 eth_spread = eth_cme - eth_spot
+spread     = is_btc_chart ? btc_spread : (is_eth_chart ? eth_spread : na)
 
-spread = is_btc_chart ? btc_spread : (is_eth_chart ? eth_spread : na)
+bar_time = time(timeframe.period, "Etc/UTC")
+bar_hour = hour(bar_time)
+bar_dayofweek = dayofweek(bar_time)
 
-plot(spread, title="CME Basis Spread", style=plot.style_columns, color=spread >= 0 ? color.green : color.red)
-hline(0, "Zero Line", color=color.gray)
+is_weekend = (bar_dayofweek == dayofweek.saturday) or (bar_dayofweek == dayofweek.sunday)
 
+is_after_friday_close = (bar_dayofweek == dayofweek.friday and bar_hour >= 23)
+
+is_before_monday_open = (bar_dayofweek == dayofweek.monday and bar_hour < 0)  // 实际无意义，mon 0点开始交易
+
+in_cme_closed = is_weekend or is_after_friday_close or (bar_hour == 22)
+
+bar_color = in_cme_closed ? color.gray : (spread >= 0 ? color.green : color.red)
+
+plot(spread, title = "CME Basis Spread", style = plot.style_columns, color = bar_color)
+hline(0, "Zero Line", color = color.gray)
